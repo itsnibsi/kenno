@@ -1,12 +1,12 @@
 "use server";
 
-import { Task, db } from '@/lib/db';
+import { db } from '@/lib/db';
 import { genId } from '@/lib/utils';
 
 export const getTasks = async () => {
   const tasks = await db.selectFrom("Task")
     .selectAll()
-    .orderBy('createdAt', 'asc')
+    .orderBy('createdAt', 'desc')
     .execute();
 
   return tasks;
@@ -23,4 +23,8 @@ export const toggleTask = async (taskId: string, completed: boolean) => {
     .set({ completed: Number(completed) })
     .where('id', '=', taskId)
     .execute();
+}
+
+export const deleteTask = async (taskId: string) => {
+  await db.deleteFrom('Task').where('id', '=', taskId).execute();
 }
