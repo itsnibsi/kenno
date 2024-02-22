@@ -1,24 +1,18 @@
 "use client";
 
 import { cn } from '@/lib/utils';
-import { useTransition } from 'react';
+import { useState, useTransition } from 'react';
 
 type TaskListItemProps = {
   task: {
     id: string;
     title: string;
-    completed: number;
+    completed: boolean;
   };
-  onToggle: (taskId: string, completed: boolean) => void;
+  onToggle: (id: string) => void;
 };
 
 export function TaskListItem({ task: { id, title, completed }, onToggle }: TaskListItemProps) {
-  const [isPending, startTransition] = useTransition();
-
-  const handleOnChange = (e: { target: { checked: boolean; }; }) => {
-    startTransition(() => onToggle(id, e.target.checked));
-  };
-
   return (
     <li className={cn(
       'flex items-center',
@@ -27,9 +21,8 @@ export function TaskListItem({ task: { id, title, completed }, onToggle }: TaskL
     )}>
       <input
         type="checkbox"
-        defaultChecked={completed === 1}
-        disabled={isPending}
-        onChange={handleOnChange} className='mr-2' />
+        defaultChecked={completed}
+        onChange={() => onToggle(id)} />
       {title}
     </li>
   );

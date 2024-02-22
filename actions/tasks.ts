@@ -1,22 +1,21 @@
 "use server";
 
-import { db } from '@/lib/db';
+import { Task, db } from '@/lib/db';
 import { genId } from '@/lib/utils';
-import { revalidatePath } from 'next/cache';
 
 export const getTasks = async () => {
-  const task = await db.selectFrom("Task")
+  const tasks = await db.selectFrom("Task")
     .selectAll()
+    .orderBy('createdAt', 'asc')
     .execute();
 
-  return task;
+  return tasks;
 }
 
 export const createTask = async (title: string) => {
-  await db.insertInto('Task')
-    .values({ id: "task_" + genId(), title })
-    .execute();
-  revalidatePath('/')
+  const taskId = "task_" + genId();
+  await db.insertInto('Task').values({ id: taskId, title }).execute();
+  return await db.selectFrom('Task').select(['id', 'title', 'completed']).where('id', '=', taskId).limit(1).executeTakeFirst();
 }
 
 export const toggleTask = async (taskId: string, completed: boolean) => {
@@ -24,5 +23,4 @@ export const toggleTask = async (taskId: string, completed: boolean) => {
     .set({ completed: Number(completed) })
     .where('id', '=', taskId)
     .execute();
-  revalidatePath('/')
 }

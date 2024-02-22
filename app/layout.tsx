@@ -16,7 +16,14 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={fontSans.className}>{children}</body>
+      <body className={fontSans.className}>
+        <div className='p-8'>
+          <h1 className='text-2xl font-bold mb-4'>Kenno</h1>
+          <div>
+            {children}
+          </div>
+        </div>
+      </body>
     </html>
   );
 }
